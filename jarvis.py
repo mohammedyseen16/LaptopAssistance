@@ -19,7 +19,7 @@ import requests
  
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-#print(voices[0].id)
+#print(voices)
 engine.setProperty('voice', voices[0].id)
 
 def speak(audio):
@@ -37,15 +37,15 @@ def wishMe():
     else:
         speak("Good Evening")
     
-    speak("I am Jack Sir. Please tell me how can I help you")
+    speak("I am Jarvis Sir. Please tell me how can I help you")
 
 def takeCommand():
     #it takes microphone input yass
     r = sr.Recognizer() 
-    print("Listening...")
+    print("..")
     with sr.Microphone() as source:
-        r.pause_threshold = 1
-        r.energy_threshold = 5000
+        r.pause_threshold = 0.8
+        r.energy_threshold = 1000
         audio = r.listen(source)
   
     try: 
@@ -55,7 +55,7 @@ def takeCommand():
  
     except Exception as e:
         print(e)
-         
+        #print('please repeat')
         return "None"
     return query
 
@@ -82,7 +82,11 @@ if __name__ == '__main__':
             speak("According to wikipedia")
             print(results)
             speak(results) 
-      
+
+        elif 'search'in query:
+            query = query.replace("search", "")
+            webbrowser.open("http://www.google.com/search?q="+ query)
+            
         elif 'open google' in query:
             webbrowser.open('http://www.google.com')
             speak("opening Google sir..")
@@ -97,6 +101,11 @@ if __name__ == '__main__':
         elif 'open chrome' in query:
             webbrowser.open('http://chrome.google.com')
             speak("opening chrome sir..")
+            query2 = takeCommand()
+            if 'close' in query2: 
+                speak("As you wish sir, closing chrome")
+                os.system("taskkill /im chrome.exe /f")
+               
         
         elif 'how are you' in query:
             speak("I am fine Sir, Thank you")
@@ -117,12 +126,8 @@ if __name__ == '__main__':
             print("My friends call me", assname)
  
         elif 'fine' in query or "good" in query:
-            speak("It's good to know that your fine")
+            speak("It's good to know that your fine") 
 
-        elif 'open chrome app' in query:
-            webbrowser.open('http://www.google.com')
-            speak("opening chrome sir..")
-        
         elif 'open mail' in query:
             webbrowser.open("https://mail.google.com/mail/u/0/")  
             speak("opening Gmail sir..")
@@ -169,6 +174,7 @@ if __name__ == '__main__':
         elif 'open github' in query:
             webbrowser.open("github.com") 
             speak("opening github sir..")
+
         elif 'open myntra' in query:
             webbrowser.open("https://www.myntra.com/") 
             speak("opening myntra sir..")
@@ -186,7 +192,8 @@ if __name__ == '__main__':
             music_dir = 'C:\\Users\\Mohammed Yaseen\\Music\\music'
             songs = os.listdir(music_dir)
             speak("There you go sir.. playing next song")
-            os.startfile(os.path.join(music_dir, songs[1]))
+            v = os.startfile(os.path.join(music_dir, songs[1]))
+            
           
         elif 'the time' in query:
             strTime = datetime.datetime.now().strftime("%H:%M:%S")
@@ -207,6 +214,7 @@ if __name__ == '__main__':
             wordpath = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\Microsoft Office\\Microsoft Office Word 2007.lnk"
             speak(f'there you go sir! opening windows word')
             os.startfile(wordpath)
+      
 
         elif 'open visual studio code' in query or 'open code' in query: 
             codePath = "C:\\Users\\Mohammed Yaseen\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
@@ -234,7 +242,7 @@ if __name__ == '__main__':
             os.startfile(sog1)
             
 
-        elif 'bekhayali' in query:
+        elif 'bekhayali' in query or 'bekheyali' in query:
             sog2 ="C:\\Users\\Mohammed Yaseen\\Desktop\\desktop\\songs\\03 - Bekhayali (Arijit Singh) - Kabir Singh (2019).mp3"
             speak(f'there you go sir!')
             os.startfile(sog2)
@@ -265,9 +273,13 @@ if __name__ == '__main__':
 
         elif "hey jarvis" in query or "hi jarvis" in query: 
             speak("yes sir")
-            query = takeCommand() 
-            speak("in a second sir!")
-            webbrowser.open("http://www.google.com/search?q=" + query)
+            query2 = takeCommand()
+            if "search for me" in query2:
+
+                speak("sure sir what should i search?")
+                query = takeCommand()
+                speak("in a second sir!")
+                webbrowser.open("http://www.google.com/search?q=" + query)
     
         elif "what" in query:
             query = query.split(" ")
@@ -362,6 +374,10 @@ if __name__ == '__main__':
         elif "who made you" in query or "who created you" in query:
             speak("you sir, you created me")
             speak("Thank you sir")
+        
+        elif 'looks nice' in query or 'looks better' in query:
+            speak("Thank you sir")
+
 
         elif 'is love' in query:
             speak("It is 7th sense that destroy all other senses")
@@ -385,54 +401,15 @@ if __name__ == '__main__':
                                                        "C:\\Users\\Mohammed Yaseen\\Downloads\\pexels-vlad-alexandru-popa-1402787.jpg",
                                                        0)
             speak("Background changed succesfully")
-        
-        elif "sleep" in query:
-            speak("Thank you sir i will go to sleep") 
-
+         
         elif 'wake up jarvis' in query:
-            speak("ok sir i got up, what can i do sir") 
+            speak("online and ready sir!, what can i do sir") 
+
+        elif "sleep jarvis" in query or "sleep" in query: 
+            speak("ok sir as you say i will sleep")              
         
         elif "quit jarvis" in query or "exit" in query:
             exit()
         
         
-        
-
-        
-
-        
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-            
-        
-
-
-
-
-        
- 
-     
-  
- 
- 
-                 
+    
