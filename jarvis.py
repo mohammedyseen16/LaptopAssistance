@@ -2,7 +2,6 @@ import speech_recognition as sr
 import pyttsx3
 import datetime
 import wikipedia
-import wolframalpha
 import webbrowser
 import os 
 import ctypes
@@ -10,17 +9,18 @@ import smtplib
 from time import ctime
 import time
 import turtle
-from gtts import gTTS
 from urllib.request import urlopen
-import jarvis
 import json
-import requests
-
+import subprocess
+import keyboard
+from pynput.mouse import Button, Controller
+import pyautogui
  
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 #print(voices)
 engine.setProperty('voice', voices[0].id)
+
 
 def speak(audio):
     engine.say(audio)
@@ -37,7 +37,7 @@ def wishMe():
     else:
         speak("Good Evening")
     
-    speak("I am Jarvis Sir. Please tell me how can I help you")
+    speak("I am jack Sir. Please tell me how can I help you")
 
 def takeCommand():
     #it takes microphone input yass
@@ -45,7 +45,7 @@ def takeCommand():
     print("..")
     with sr.Microphone() as source:
         r.pause_threshold = 0.8
-        r.energy_threshold = 1000
+        r.energy_threshold = 3000
         audio = r.listen(source)
   
     try: 
@@ -60,28 +60,50 @@ def takeCommand():
     return query
 
 #credentials
-def sendEmail(to , content):
+def sendEmail(to , contents):
     server = smtplib.SMTP('smtp.gmail.com', 587)
     server.ehlo()
     server.starttls()
     server.login('jackrourke17045@gmail.com', 'asiftabassum')
-    server.sendmail('yaseen17045@gmail.com', to, content)
+    server.sendmail('wmohammed693@gmail.com', to, contents)
     server.close()
 
 if __name__ == '__main__':
     
     #wishMe() 
+ 
     while True:
         query = takeCommand().lower()
 
     #logic for executing a task
         if 'wikipedia' in query:
             speak('searching wikipedia...')
-            query = query.replace("wikipedia", "")
-            results = wikipedia.summary(query, sentences=2)
+            query = query.replace("wikipedia", " ")
+            results = wikipedia.summary(query, sentences = 2)
             speak("According to wikipedia")
             print(results)
             speak(results) 
+        
+        elif 'send a mail' in query:
+            try:
+                speak("What should I say?")
+                contents = takeCommand()
+                speak("whome should i send")
+                to = "yaseenproduction17045@gmail.com" 
+                #to  = "wmohammed693@gmail.com"
+                sendEmail(to, contents)
+                speak("Email has been sent !")
+            except Exception as e:
+                print(e)
+                speak("I am not able to send this email")
+            
+        elif 'Good  morning' in query:
+            speak("Good morning sir!")
+        
+        elif 'Good  afternoon' in query:
+            speak("Good afternoon sir!")
+        
+
 
         elif 'search'in query:
             query = query.replace("search", "")
@@ -97,16 +119,29 @@ if __name__ == '__main__':
         elif 'open youtube' in query:
             webbrowser.open('http://www.youtube.com')
             speak("opening youtube sir..")
+        
+        elif 'open twitter' in query:
+            webbrowser.open('https://twitter.com/explore')
+            speak("opening twitter sir..")
+        
+        elif 'open linkedin' in query:
+            webbrowser.open('https://www.linkedin.com/feed/')
+            speak("opening linkedin sir..")
 
         elif 'open chrome' in query:
-            webbrowser.open('http://chrome.google.com')
+            webbrowser.open('http://www.google.com/')
             speak("opening chrome sir..")
-            query2 = takeCommand()
-            if 'close' in query2: 
+    
+               
+        elif 'close tab' in query: 
+                keyboard.press_and_release('Ctrl + w')
+                speak("Done sir")
+                
+            
+        elif 'close chrome' in query: 
                 speak("As you wish sir, closing chrome")
                 os.system("taskkill /im chrome.exe /f")
-               
-        
+
         elif 'how are you' in query:
             speak("I am fine Sir, Thank you")
             speak("How are you, Sir")
@@ -121,9 +156,8 @@ if __name__ == '__main__':
             speak("Thanks for naming me")
  
         elif "what's your name" in query or "What is your name" in query:
-            speak("My friends call me")
-            speak(assname)
-            print("My friends call me", assname)
+            speak("My friends call me Jack")
+            
  
         elif 'fine' in query or "good" in query:
             speak("It's good to know that your fine") 
@@ -146,6 +180,9 @@ if __name__ == '__main__':
             webbrowser.open('http://www.primevideo.com')
             print("opening Amazon Prime sir..")
             speak("opening Amazon Prime sir..")
+
+        elif "who made you" in query or "created you" in query:
+            speak = "I have been created by Team yaseen."        
         
         elif 'open facebook' in query:
             webbrowser.open('https://www.facebook.com/')
@@ -157,7 +194,22 @@ if __name__ == '__main__':
             print("opening instagram sir..")
             speak("opening instagram sir..")
 
-  
+        elif 'open first link' in query:
+            speak('Right away sir')
+            mouse = Controller()
+            mouse.position =(600, 300)
+            mouse.click(Button.left, 1)
+        
+        elif 'open second link' in query:
+            mouse = Controller()
+            mouse.position =(423, 709)
+            mouse.click(Button.left, 1)
+        
+        elif 'go back' in query:
+            speak('ok sir')
+            keyboard.press_and_release('alt + left arrow')
+
+
         elif 'open netflix' in query:
             webbrowser.open('https://netflix.com/')
             print("Opening Netflix sir")
@@ -187,6 +239,21 @@ if __name__ == '__main__':
             songs = os.listdir(music_dir)
             speak("There you go sir.. playing your favourite")
             os.startfile(os.path.join(music_dir, songs[0]))
+
+        elif 'play songs' in query:
+            music_dir = 'C:\\Users\\Mohammed Yaseen\\Music\\music'
+            songs = os.listdir(music_dir)
+            speak("There you go sir.. playing your favourite")
+            os.startfile(os.path.join(music_dir, songs[0]))
+        
+        elif 'close music player' in query:
+            keyboard.press_and_release('alt + f4')
+        
+        elif 'close notepad plus plus' in query:
+            keyboard.press_and_release('alt + f4')
+            
+        elif 'close notepad' in query:
+            keyboard.press_and_release('alt + f4')
         
         elif 'next song' in query:
             music_dir = 'C:\\Users\\Mohammed Yaseen\\Music\\music'
@@ -226,11 +293,13 @@ if __name__ == '__main__':
             speak(f'there you go sir! opening powerpoit')
             os.startfile(codePath)
  
-        elif 'power point presentation' in query:
-            speak("opening Power Point presentation")
-            power = r" "
-            os.startfile(power)
-        
+        elif 'open my presentation' in query:
+            speak("opening your Presentation sir..")
+            webbrowser.open("https://www.canva.com/design/DAEdBPIXkhI/h5PZRptQR4QbH-7hVaN-jw/edit") 
+            mouse = Controller()
+            mouse.position =(1257,31)
+            mouse.click(Button.left, 1)
+          
         elif 'taron ke shahar' in query or 'taron ki shehar' in query:  
             CodePath = "C:\\Users\\Mohammed Yaseen\\Music\\music\\Taaron Ke Shehar - Neha Kakkar.mp3"
             speak(f'there you go sir!')
@@ -265,17 +334,17 @@ if __name__ == '__main__':
             speak("Hold on sir, I will show you where " + location + " is.")
             webbrowser.open("http://www.google.nl/maps/place/" + location + "/&amp;")
         
-        elif 'jarvis search' in query: 
+        elif 'jack search' in query: 
             speak("What Should I search sir?")
             content1 = takeCommand()
             webbrowser.open("http://www.google.com/search?q="+ content1)
             speak("just a second sir!")
 
-        elif "hey jarvis" in query or "hi jarvis" in query: 
+        elif "hey jack" in query or "hi jack" in query: 
             speak("yes sir")
             query2 = takeCommand()
             if "search for me" in query2:
-
+    
                 speak("sure sir what should i search?")
                 query = takeCommand()
                 speak("in a second sir!")
@@ -283,52 +352,32 @@ if __name__ == '__main__':
     
         elif "what" in query:
             query = query.split(" ")
-            location = query[2]+' '+query[3]+' '+query[4]
+            location = query[2]+' '+query[3]
             speak("sir According to google " + location + " is.")
             webbrowser.open("http://www.google.com/search?q="+ location)
       
-        elif "song in" in query:
-            query = query.split(" ")
-            location = query[1]+' '+query[2]
-            speak("opening"+location+"song in youtube")
-            webbrowser.open("https://www.youtube.com/results?search_query="+ location)
         
         elif "in youtube" in query:
             query = query.split(" ")
             location = query[1]+' '+query[2]
-            speak("opening"+location+"song in youtube")
+            speak("opening"+location+"in youtube")
             webbrowser.open("https://www.youtube.com/results?search_query="+ location)
+            speak(" ")
+            mouse = Controller()
+            mouse.position =(426, 204)
+            mouse.click(Button.left)
+            
+        
 
-          
+            
 
         #-----------------------------------------------------
         
-        elif 'email to yaseen' in query:
-            try:
-                speak("What Should I say sir?")
-                content = takeCommand()
-                to  = "yaseen17045@gmail.com"
-                sendEmail(to, content)
-                speak("Email has been sent!")
-                speak("Anything else sir")
-            except Exception as e:
-                print(e)
-                speak("sorry")
-            
-        elif 'email to wasim' in query:
-            try:
-                speak("What Should I say sir?")
-                content = takeCommand()
-                to  = "mailto:wmohammed693@gmail.com"
-                sendEmail(to, content)
-                speak("Email has been sent!")
-                speak("Anything else sir")
-            except Exception as e:
-                print(e)
-                speak("sorry")
+       
 
         elif 'hey jack' in query:
-            speak('Hi sir how can i help you!')
+            speak("yes sir")
+        
         
         elif 'hi jack' in query:
             speak('Hi sir how can i help you!')
@@ -342,16 +391,10 @@ if __name__ == '__main__':
         elif 'hey jack can you do me a favour' in query:
             speak('Hi sir how can i help you!')
         
-        elif 'thank you jack' in query:
-            speak('Anytime sir..')
-            speak("If you need anything i will be here")
-
         elif 'thank you' in query:
-            speak('Anytime sir')
-        
-        elif 'jack' in query:
-            speak('yes sir')
-        
+            speak('Anytime sir..')
+            speak("If you need anything i will be here")  
+
         elif 'do you miss tony stark' in query:
             speak('yes sir')
             speak('But i hate Thanos')
@@ -370,6 +413,7 @@ if __name__ == '__main__':
         elif 'weather' in query:
             webbrowser.open("https://www.google.com/search?q=today%27s%20weather&gws_rd=ssl") 
             speak('Showing results on current weather sir..')
+        
   
         elif "who made you" in query or "who created you" in query:
             speak("you sir, you created me")
@@ -382,9 +426,13 @@ if __name__ == '__main__':
         elif 'is love' in query:
             speak("It is 7th sense that destroy all other senses")
         
+        elif 'open meet' in query:
+            speak("ok sir opening google meet")
+            webbrowser.open("https://meet.google.com/dkc-ijsa-vwb") 
+        
         elif 'start an instant meeting' in query:
             speak("ok sir opening google meet")
-            webbrowser.open("https://meet.google.com/_meet/jrq-cvbb-dmm?ijlm=1617121727687&adhoc=1&hs=187") 
+            webbrowser.open("https://meet.google.com/dkc-ijsa-vwb") 
  
         elif "who are you" in query:
             speak("I am your virtual assistant created by team Yaseen")
@@ -394,22 +442,85 @@ if __name__ == '__main__':
 
         elif "everyone are laughing" in query:
             speak("my apologies sir")
+        
+        
+        elif "minimize window" in query:
+            speak("ok sir")
+            keyboard.press_and_release('command + m')
+            
 
-        elif 'change background' in query:
+        elif 'change wallpaper' in query:
+            ctypes.windll.user32.SystemParametersInfoW(20,
+                                                       0,
+                                                       "C:\\Users\\Mohammed Yaseen\\Downloads\\pexels-christian-heitz-842711.jpg",
+                                                       0)
+            speak("Background changed succesfully")
+
+        elif 'keep relevant wallpaper' in query:
             ctypes.windll.user32.SystemParametersInfoW(20,
                                                        0,
                                                        "C:\\Users\\Mohammed Yaseen\\Downloads\\pexels-vlad-alexandru-popa-1402787.jpg",
                                                        0)
-            speak("Background changed succesfully")
-         
-        elif 'wake up jarvis' in query:
-            speak("online and ready sir!, what can i do sir") 
+            speak("Is this ok sir?")
+        
+        elif 'revert back to original wallpaper' in query:
+            ctypes.windll.user32.SystemParametersInfoW(20,
+                                                       0,
+                                                       "C:\\Users\\Mohammed Yaseen\\Downloads\\windows-10x-3840x2160-microsoft-4k-23223.jpg",
+                                                       0)
 
-        elif "sleep jarvis" in query or "sleep" in query: 
-            speak("ok sir as you say i will sleep")              
+                
+        elif 'yup good' in query:
+            speak("ok sir")            
+            
         
-        elif "quit jarvis" in query or "exit" in query:
+        elif "will you be my gf" in query or "will you be my bf" in query:  
+            speak("I'm not sure about, may be you should give me some time")
+        
+        elif "how are you" in query:
+            speak("I'm fine")
+ 
+        elif "i love you" in query:
+            speak("It's hard to understand")
+         
+
+        elif "sleep jack" in query: 
+            speak("ok sir as you say i will sleep")   
+
+        elif 'log off' in query:
+            speak("locking the device")
+            ctypes.windll.user32.LockWorkStation()
+
+        elif 'shutdown' in query or 'shut down' in query:
+            speak("Hold On sir! Your system is on its way to shut down")
+            subprocess.call('shutdown / p /s')
+        
+        elif "restart" in query:
+            subprocess.call(["shutdown", "/r"])
+        
+        elif "write a note" in query:
+            speak("What should i write, sir")
+            note = takeCommand()
+            file = open('jack.txt', 'w')
+            speak("Sir, Should i include date and time")
+            snfm = takeCommand()
+            if 'yes' in snfm or 'sure' in snfm:
+                strTime = datetime.datetime.now().strftime("%H:%M:%S")
+                file.write(strTime)
+                file.write(":-")
+                file.write(note)
+                speak('done sir')
+            else:
+                file.write(note) 
+        
+        elif 'wake up' in query:
+            speak('online and ready sir')
+            
+        elif 'sleep' in query:
+            speak('ok sir, i will sleep now')
+                       
+        
+        elif "quit" in query or "exit" in query:
+            speak("going offline sir")
             exit()
-        
-        
-    
+ 
